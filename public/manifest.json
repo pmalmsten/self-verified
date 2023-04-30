@@ -5,7 +5,12 @@
   "manifest_version": 3,
   "action": {
     "default_popup": "index.html",
-    "default_title": "Open the popup"
+    "default_title": "Open the popup",
+    "default_icon": {
+      "16": "icon-192.png",
+      "48": "icon-192.png",
+      "128": "icon-192.png"
+    }
   },
   "background": {
     "scripts": [
@@ -20,8 +25,8 @@
     "*://*/*"
   ],
   "icons": {
-    "16": "logo192.png",
-    "48": "logo192.png",
-    "128": "logo192.png"
+    "16": "icon-locked-192.png",
+    "48": "icon-locked-192.png",
+    "128": "icon-locked-192.png"
   }
 }
