@@ -58,17 +58,7 @@ const storageInitialized = Browser.storage.local.get()
         }
 
         // Check if the current tab is a trusted social url
-        let currentTab = await Browser.tabs.query({ active: true, currentWindow: true });
-        let currentTabUrl = currentTab[0].url;
-        if (currentStorage.trustedSocialUrls !== undefined &&
-            currentTabUrl !== undefined &&
-            currentStorage.trustedSocialUrls[currentTabUrl] !== undefined) {
-            console.log("Current tab is trusted social url");
-            await Browser.action.setIcon({ path: "icon-locked-192.png" });
-        } else {
-            console.log("Current tab is not trusted social url");
-            await Browser.action.setIcon({ path: "icon-192.png" });
-        }
+        await updateIconToReflectActiveTab();
     })
     .catch(error => {
         console.error(error);
@@ -80,17 +70,7 @@ const storageInitialized = Browser.storage.local.get()
 Browser.tabs.onActivated.addListener(async activeInfo => {
     await storageInitialized;
 
-    let currentTab = await Browser.tabs.get(activeInfo.tabId);
-    let currentTabUrl = currentTab.url;
-    if (currentStorage.trustedSocialUrls !== undefined &&
-        currentTabUrl !== undefined &&
-        currentStorage.trustedSocialUrls[currentTabUrl] !== undefined) {
-        console.log("Current tab is trusted social url");
-        await Browser.action.setIcon({ path: "icon-locked-192.png" });
-    } else {
-        console.log("Current tab is not trusted social url");
-        await Browser.action.setIcon({ path: "icon-192.png" });
-    }
+    await updateIconToReflectActiveTab();
 });
 
 // Listen for changes to the active window. If the url of the active tab is a
@@ -98,9 +78,15 @@ Browser.tabs.onActivated.addListener(async activeInfo => {
 // icon-locked-192.png. Otherwise, change it to icon-192.png.
 Browser.windows.onFocusChanged.addListener(async windowId => {
     await storageInitialized;
+    
+    await updateIconToReflectActiveTab();
+});
 
+// Function for updating the icon given the current active tab url.
+async function updateIconToReflectActiveTab() {
     let currentTab = await Browser.tabs.query({ active: true, currentWindow: true });
     let currentTabUrl = currentTab[0].url;
+
     if (currentStorage.trustedSocialUrls !== undefined &&
         currentTabUrl !== undefined &&
         currentStorage.trustedSocialUrls[currentTabUrl] !== undefined) {
@@ -110,4 +96,4 @@ Browser.windows.onFocusChanged.addListener(async windowId => {
         console.log("Current tab is not trusted social url");
         await Browser.action.setIcon({ path: "icon-192.png" });
     }
-});
+}
